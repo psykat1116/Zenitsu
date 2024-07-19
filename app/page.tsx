@@ -18,14 +18,17 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!input) {
+      if (!input || input.length === 0) {
         setResult(undefined);
         return;
       }
 
-      const reach = await fetch(`/api/search?q=${input}`, {
-        method: "GET",
-      });
+      const reach = await fetch(
+        `https://zenitsu.psykat.workers.dev/api/search?q=${input}`,
+        {
+          method: "GET",
+        }
+      );
       const data = await reach.json();
 
       setResult(data as { results: string[]; duration: number });
@@ -37,10 +40,10 @@ export default function Home() {
   return (
     <main className="h-full w-full grainy">
       <div className="flex flex-col gap-6 items-center pt-32 duration-500 animate-in animate fade-in-5 slide-in-from-bottom-2.5">
-        <h1 className="text-5xl tracking-tight font-bold">Zenitsu ⚡</h1>
-        <p className="text-zinc-600 tex-lg max-w-prose text-center capitalize">
-          Zenitsu is a search engine that uses the Bing Search API to search for
-          web pages, images, videos, and news.
+        <h1 className="text-6xl tracking-tight font-bold">Zenitsu ⚡</h1>
+        <p className="text-zinc-600 text-xl max-w-prose text-center capitalize">
+          Zenitsu, A High Performance API Built With <b>Redis</b>,{" "}
+          <b>Cloudfare Workers</b>, <b>Hono JS</b>
           <br /> Type a query below and get your results in miliseconds.
         </p>
         <div className="w-full max-w-md">
@@ -52,12 +55,13 @@ export default function Home() {
               className="placeholder:text-zinc-500"
             />
             <CommandList>
-              {result && result.results.length === 0 ? (
+              {result?.results.length === 0 ? (
                 <CommandEmpty>
                   No results found for{" "}
                   <span className="text-primary">{input}</span>
                 </CommandEmpty>
-              ) : (
+              ) : null}
+              {result && result.results ? (
                 <CommandGroup heading="Results">
                   {result?.results.map((result) => (
                     <CommandItem
@@ -69,7 +73,7 @@ export default function Home() {
                     </CommandItem>
                   ))}
                 </CommandGroup>
-              )}
+              ) : null}
               {result?.results && (
                 <>
                   <div className="h-px w-full bg-zinc-200" />
