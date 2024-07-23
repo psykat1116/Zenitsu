@@ -46,7 +46,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, [input]);
+  }, [input, selected]);
 
   return (
     <main className="h-full w-full grainy">

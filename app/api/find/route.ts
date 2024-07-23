@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const q = req.nextUrl.searchParams.get("q");
+    const { searchParams } = new URL(req.url);
+    const q = searchParams.get("q");
     if (!q) {
       return NextResponse.json(
         { message: "Query Is Required" },
