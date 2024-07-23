@@ -20,8 +20,6 @@ app.get("/search", async (c) => {
     const { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN } =
       env<EnvConfig>(c);
 
-    const start = performance.now();
-
     const redis = new Redis({
       url: UPSTASH_REDIS_REST_URL,
       token: UPSTASH_REDIS_REST_TOKEN,
@@ -40,21 +38,25 @@ app.get("/search", async (c) => {
     }
 
     const res = [];
-    const rank = await redis.zrank("terms", query);
+    let temp: string[] = [];
 
+    const start = performance.now();
+    
+    const rank = await redis.zrank("terms", query);
     if (rank !== null && rank !== undefined) {
-      const temp = await redis.zrange<string[]>("terms", rank, rank + 100);
-      for (const el of temp) {
-        if (!el.startsWith(query)) {
-          break;
-        }
-        if (el.endsWith("*")) {
-          res.push(el.substring(0, el.length - 1));
-        }
-      }
+      temp = await redis.zrange<string[]>("terms", rank, rank + 100);
     }
 
     const end = performance.now();
+
+    for (const el of temp) {
+      if (!el.startsWith(query)) {
+        break;
+      }
+      if (el.endsWith("*")) {
+        res.push(el.substring(0, el.length - 1));
+      }
+    }
 
     return c.json({
       results: res,
