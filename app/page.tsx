@@ -30,7 +30,7 @@ export default function Home() {
 
       if (selected === "redis") {
         reach = await fetch(
-          `${process.env.BACKEND_URL}/api/search?q=${input}`,
+          `https://zenitsu.psykat.workers.dev/api/search?q=${input}`,
           {
             method: "GET",
           }
